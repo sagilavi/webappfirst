@@ -3,6 +3,11 @@ import { useState, useEffect } from 'react';
 import styled from '@emotion/styled';
 import { fetchSheetData } from '../utils/googleSheetsConfig';
 
+interface SheetData {
+  headers: string[];
+  values: string[];
+}
+
 const Section = styled.div`
   margin-bottom: 2rem;
   background: #ffffff;
@@ -111,6 +116,7 @@ const LinksWrapper = styled.div`
   display: flex;
   flex-direction: column;
   gap: 1rem;
+  align-items: center;
 `;
 
 const StyledLink = styled.a`
@@ -118,12 +124,14 @@ const StyledLink = styled.a`
   text-decoration: none;
   display: inline-block;
   font-size: 1.1rem;
-  text-align: right;
+  text-align: center;
   background-color: #4CAF50;
   padding: 0.8rem 1.5rem;
   border-radius: 6px;
   transition: all 0.3s ease;
   box-shadow: 0 2px 4px rgba(76, 175, 80, 0.1);
+  width: 25%;
+  min-width: 150px;
 
   &:hover {
     background-color: #388E3C;
@@ -181,13 +189,13 @@ const ServicePage = () => {
   const { type } = useParams();
   const location = useLocation();
   const [expandedItems, setExpandedItems] = useState<{ [key: string]: boolean }>({});
-  const [fetchedData, setFetchedData] = useState<string[] | null>(null);
+  const [fetchedData, setFetchedData] = useState<SheetData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  const handleExpand = (index: number) => {
+  const handleExpand = (containerId: string) => {
     setExpandedItems(prev => ({
       ...prev,
-      [index]: !prev[index]
+      [containerId]: !prev[containerId]
     }));
   };
 
@@ -198,12 +206,8 @@ const ServicePage = () => {
       const answer = searchParams.get('answer');
 
       if (answer) {
-        const rowData = await fetchSheetData(answer);
-        if (rowData) {
-          setFetchedData(rowData);
-        } else {
-          setFetchedData(null);
-        }
+        const data = await fetchSheetData(answer);
+        setFetchedData(data);
       }
       setIsLoading(false);
     };
@@ -212,9 +216,15 @@ const ServicePage = () => {
   }, [location.search]);
 
   // Helper function to check if a container should be visible
-  const isContainerVisible = (columnIndex: number): boolean => {
+  const isContainerVisible = (containerId: string): boolean => {
     if (!fetchedData) return false;
-    return fetchedData[columnIndex] !== 'FALSE';
+    
+    // Find the column index where the header matches the container ID
+    const columnIndex = fetchedData.headers.findIndex(header => header === containerId);
+    if (columnIndex === -1) return false;
+
+    // Check if the value in that column is not 'FALSE'
+    return fetchedData.values[columnIndex] !== 'FALSE';
   };
 
   if (type === 'home-adjustments') {
@@ -231,8 +241,10 @@ const ServicePage = () => {
                 <h3>Debug Info - Fetched Data:</h3>
                 {fetchedData ? (
                   <div>
-                    <p><strong>Row Data:</strong></p>
-                    <pre>{JSON.stringify(fetchedData, null, 2)}</pre>
+                    <p><strong>Headers:</strong></p>
+                    <pre>{JSON.stringify(fetchedData.headers, null, 2)}</pre>
+                    <p><strong>Values:</strong></p>
+                    <pre>{JSON.stringify(fetchedData.values, null, 2)}</pre>
                   </div>
                 ) : (
                   <p>No data fetched</p>
@@ -240,18 +252,18 @@ const ServicePage = () => {
               </DebugContainer>
 
               <ServiceContainer>
-                {/* Container 1 - Column 2 */}
-                {isContainerVisible(1) && (
+                {/* Container 1 */}
+                {isContainerVisible('InfoCard_home-adjustments1') && (
                   <Section id="InfoCard_home-adjustments1">
                     <Title>מדרגות גישה לבית - מוגבלות זמנית</Title>
                     <Summary>
                       בעיה: סכנת נפילה וקושי בכניסה וביציאה.
                       פתרון: התקנת רמפה נגישה ו/או הוספת מאחז יד. השאלה/השכרת רמפה ניידת דרך יד שרה או קופת חולים כללית (בהשתתפות עצמית) 'זחליל' יעבור לאחריות הקופה מהראשון לאפריל 2025.
                     </Summary>
-                    <ExpandButton onClick={() => handleExpand(0)}>
-                      {expandedItems[0] ? 'סגור מידע נוסף' : 'מידע נוסף ולפרוט על זכויות לחץ כאן'}
+                    <ExpandButton onClick={() => handleExpand('InfoCard_home-adjustments1')}>
+                      {expandedItems['InfoCard_home-adjustments1'] ? 'סגור מידע נוסף' : 'מידע נוסף ולפרוט על זכויות לחץ כאן'}
                     </ExpandButton>
-                    <ExpandableContent isExpanded={!!expandedItems[0]}>
+                    <ExpandableContent isExpanded={!!expandedItems['InfoCard_home-adjustments1']}>
                       <SectionTitle>המלצות וזכויות</SectionTitle>
                       <RecommendationsText>
                         על פי מומחים רפואיים יש לשקול העמדת רמפה למצב עתידי שבו יהיה צורך ברמפה קבועה, ניתן להגיש בקשה למימון מהשירותים החברתיים או קופת חולים ומשרד הבינוי והשיכון.
@@ -270,17 +282,17 @@ const ServicePage = () => {
                 )}
 
                 {/* Container 2 - Column 3 */}
-                {isContainerVisible(2) && (
+                {isContainerVisible('InfoCard_home-adjustments2') && (
                   <Section id="InfoCard_home-adjustments2">
                     <Title>התאמות במקלחת</Title>
                     <Summary>
                       בעיה: סכנת החלקה וקושי בניידות בזמן רחצה.
                       פתרון: התקנת ידיות אחיזה, משטח מונע החלקה, וכסא רחצה מותאם.
                     </Summary>
-                    <ExpandButton onClick={() => handleExpand(1)}>
-                      {expandedItems[1] ? 'סגור מידע נוסף' : 'מידע נוסף ולפרוט על זכויות לחץ כאן'}
+                    <ExpandButton onClick={() => handleExpand('InfoCard_home-adjustments2')}>
+                      {expandedItems['InfoCard_home-adjustments2'] ? 'סגור מידע נוסף' : 'מידע נוסף ולפרוט על זכויות לחץ כאן'}
                     </ExpandButton>
-                    <ExpandableContent isExpanded={!!expandedItems[1]}>
+                    <ExpandableContent isExpanded={!!expandedItems['InfoCard_home-adjustments2']}>
                       <SectionTitle>המלצות וזכויות</SectionTitle>
                       <RecommendationsText>
                         ודאו באופן תדיר את תחזוקת המקלחון והתאמתו לצרכי ובטיחות המטופל.
@@ -299,17 +311,17 @@ const ServicePage = () => {
                 )}
 
                 {/* Container 3 - Column 4 */}
-                {isContainerVisible(3) && (
+                {isContainerVisible('InfoCard_home-adjustments3') && (
                   <Section id="InfoCard_home-adjustments3">
                     <Title>התאמות באמבטיה</Title>
                     <Summary>
                       בעיה: חוסר יכולת או קושי בכניסה ויציאה מהאמבטיה, סכנת החלקה ונפילה.
                       פתרון: התקנת ידיות אחיזה, משטח מונע החלקה, כסא רחצה מותאם ומעלון אמבטיה במידת הצורך.
                     </Summary>
-                    <ExpandButton onClick={() => handleExpand(2)}>
-                      {expandedItems[2] ? 'סגור מידע נוסף' : 'מידע נוסף ולפרוט על זכויות לחץ כאן'}
+                    <ExpandButton onClick={() => handleExpand('InfoCard_home-adjustments3')}>
+                      {expandedItems['InfoCard_home-adjustments3'] ? 'סגור מידע נוסף' : 'מידע נוסף ולפרוט על זכויות לחץ כאן'}
                     </ExpandButton>
-                    <ExpandableContent isExpanded={!!expandedItems[2]}>
+                    <ExpandableContent isExpanded={!!expandedItems['InfoCard_home-adjustments3']}>
                       <SectionTitle>המלצות וזכויות</SectionTitle>
                       <RecommendationsText>
                         - התקנת לחצן מצוקה או מערכת התראה קולית בחדר הרחצה
@@ -327,17 +339,17 @@ const ServicePage = () => {
                 )}
 
                 {/* Container 4 - Column 5 */}
-                {isContainerVisible(4) && (
+                {isContainerVisible('InfoCard_home-adjustments4') && (
                   <Section id="InfoCard_home-adjustments4">
                     <Title>התאמות בחדר השינה</Title>
                     <Summary>
                       בעיה: קושי בקימה ושכיבה, סכנת נפילה בעת מעברים, צורך בתנוחה מותאמת.
                       פתרון: מיטה מתכווננת חשמלית, מעקות בטיחות, ידיות עזר וכריות תמיכה.
                     </Summary>
-                    <ExpandButton onClick={() => handleExpand(3)}>
-                      {expandedItems[3] ? 'סגור מידע נוסף' : 'מידע נוסף ולפרוט על זכויות לחץ כאן'}
+                    <ExpandButton onClick={() => handleExpand('InfoCard_home-adjustments4')}>
+                      {expandedItems['InfoCard_home-adjustments4'] ? 'סגור מידע נוסף' : 'מידע נוסף ולפרוט על זכויות לחץ כאן'}
                     </ExpandButton>
-                    <ExpandableContent isExpanded={!!expandedItems[3]}>
+                    <ExpandableContent isExpanded={!!expandedItems['InfoCard_home-adjustments4']}>
                       <SectionTitle>המלצות וזכויות</SectionTitle>
                       <RecommendationsText>
                         - התקנת לחצן מצוקה ליד המיטה
@@ -355,17 +367,17 @@ const ServicePage = () => {
                 )}
 
                 {/* Container 5 - Column 6 */}
-                {isContainerVisible(5) && (
+                {isContainerVisible('InfoCard_home-adjustments5') && (
                   <Section id="InfoCard_home-adjustments5">
                     <Title>התאמות להתניידות כללית בבית</Title>
                     <Summary>
                       התאמות נדרשות: מעברים ודלתות מותאמים, רמפות, הסרת מכשולים, ידיות אחיזה, ומושבים מוגבהים.
                       חשוב להתאים את גובה משטחי העבודה ולדאוג לאחסון נגיש.
                     </Summary>
-                    <ExpandButton onClick={() => handleExpand(4)}>
-                      {expandedItems[4] ? 'סגור מידע נוסף' : 'מידע נוסף ולפרוט על זכויות לחץ כאן'}
+                    <ExpandButton onClick={() => handleExpand('InfoCard_home-adjustments5')}>
+                      {expandedItems['InfoCard_home-adjustments5'] ? 'סגור מידע נוסף' : 'מידע נוסף ולפרוט על זכויות לחץ כאן'}
                     </ExpandButton>
-                    <ExpandableContent isExpanded={!!expandedItems[4]}>
+                    <ExpandableContent isExpanded={!!expandedItems['InfoCard_home-adjustments5']}>
                       <SectionTitle>המלצות וזכויות</SectionTitle>
                       <RecommendationsText>
                         - וידוא רוחב מתאים של דלתות ומעברים
@@ -387,17 +399,17 @@ const ServicePage = () => {
                 )}
 
                 {/* Container 6 - Column 7 */}
-                {isContainerVisible(6) && (
+                {isContainerVisible('InfoCard_home-adjustments6') && (
                   <Section id="InfoCard_home-adjustments6">
                     <Title>התאמות במטבח</Title>
                     <Summary>
                       בעיה: קושי בהגעה למדפים גבוהים, סכנת כוויות, קושי בשימוש במכשירי חשמל.
                       פתרון: התאמת גובה משטחים, התקנת מדפים נגישים, ברזים בטיחותיים.
                     </Summary>
-                    <ExpandButton onClick={() => handleExpand(5)}>
-                      {expandedItems[5] ? 'סגור מידע נוסף' : 'מידע נוסף ולפרוט על זכויות לחץ כאן'}
+                    <ExpandButton onClick={() => handleExpand('InfoCard_home-adjustments6')}>
+                      {expandedItems['InfoCard_home-adjustments6'] ? 'סגור מידע נוסף' : 'מידע נוסף ולפרוט על זכויות לחץ כאן'}
                     </ExpandButton>
-                    <ExpandableContent isExpanded={!!expandedItems[5]}>
+                    <ExpandableContent isExpanded={!!expandedItems['InfoCard_home-adjustments6']}>
                       <SectionTitle>המלצות וזכויות</SectionTitle>
                       <RecommendationsText>
                         - התקנת משטחי עבודה בגובה מותאם
@@ -415,17 +427,17 @@ const ServicePage = () => {
                 )}
 
                 {/* Container 7 - Column 8 */}
-                {isContainerVisible(7) && (
+                {isContainerVisible('InfoCard_home-adjustments7') && (
                   <Section id="InfoCard_home-adjustments7">
                     <Title>התאמות בסלון</Title>
                     <Summary>
                       בעיה: קושי בישיבה וקימה מהספה, צורך בנגישות לשלט ומכשירים.
                       פתרון: כורסא מתרוממת, שולחן מתכוונן, אחסון נגיש לחפצים שימושיים.
                     </Summary>
-                    <ExpandButton onClick={() => handleExpand(6)}>
-                      {expandedItems[6] ? 'סגור מידע נוסף' : 'מידע נוסף ולפרוט על זכויות לחץ כאן'}
+                    <ExpandButton onClick={() => handleExpand('InfoCard_home-adjustments7')}>
+                      {expandedItems['InfoCard_home-adjustments7'] ? 'סגור מידע נוסף' : 'מידע נוסף ולפרוט על זכויות לחץ כאן'}
                     </ExpandButton>
-                    <ExpandableContent isExpanded={!!expandedItems[6]}>
+                    <ExpandableContent isExpanded={!!expandedItems['InfoCard_home-adjustments7']}>
                       <SectionTitle>המלצות וזכויות</SectionTitle>
                       <RecommendationsText>
                         - בחירת רהיטים בגובה מתאים
@@ -443,17 +455,17 @@ const ServicePage = () => {
                 )}
 
                 {/* Container 8 - Column 9 */}
-                {isContainerVisible(8) && (
+                {isContainerVisible('InfoCard_home-adjustments8') && (
                   <Section id="InfoCard_home-adjustments8">
                     <Title>התאמות תאורה</Title>
                     <Summary>
                       בעיה: קושי בהפעלת מתגי תאורה, צורך בתאורה מותאמת.
                       פתרון: מתגים מונגשים, חיישני תנועה, תאורה אוטומטית.
                     </Summary>
-                    <ExpandButton onClick={() => handleExpand(7)}>
-                      {expandedItems[7] ? 'סגור מידע נוסף' : 'מידע נוסף ולפרוט על זכויות לחץ כאן'}
+                    <ExpandButton onClick={() => handleExpand('InfoCard_home-adjustments8')}>
+                      {expandedItems['InfoCard_home-adjustments8'] ? 'סגור מידע נוסף' : 'מידע נוסף ולפרוט על זכויות לחץ כאן'}
                     </ExpandButton>
-                    <ExpandableContent isExpanded={!!expandedItems[7]}>
+                    <ExpandableContent isExpanded={!!expandedItems['InfoCard_home-adjustments8']}>
                       <SectionTitle>המלצות וזכויות</SectionTitle>
                       <RecommendationsText>
                         - התקנת חיישני תנועה בחדרים מרכזיים
@@ -471,17 +483,17 @@ const ServicePage = () => {
                 )}
 
                 {/* Container 9 - Column 10 */}
-                {isContainerVisible(9) && (
+                {isContainerVisible('InfoCard_home-adjustments9') && (
                   <Section id="InfoCard_home-adjustments9">
                     <Title>מערכות בטיחות</Title>
                     <Summary>
                       התקנת מערכות התראה, לחצני מצוקה, וחיישני נפילה.
                       חשוב להתקין מערכת אזעקה רפואית ומערכת תקשורת חירום.
                     </Summary>
-                    <ExpandButton onClick={() => handleExpand(8)}>
-                      {expandedItems[8] ? 'סגור מידע נוסף' : 'מידע נוסף ולפרוט על זכויות לחץ כאן'}
+                    <ExpandButton onClick={() => handleExpand('InfoCard_home-adjustments9')}>
+                      {expandedItems['InfoCard_home-adjustments9'] ? 'סגור מידע נוסף' : 'מידע נוסף ולפרוט על זכויות לחץ כאן'}
                     </ExpandButton>
-                    <ExpandableContent isExpanded={!!expandedItems[8]}>
+                    <ExpandableContent isExpanded={!!expandedItems['InfoCard_home-adjustments9']}>
                       <SectionTitle>המלצות וזכויות</SectionTitle>
                       <RecommendationsText>
                         - התקנת לחצני מצוקה בחדרים מרכזיים
@@ -499,17 +511,17 @@ const ServicePage = () => {
                 )}
 
                 {/* Container 10 - Column 11 */}
-                {isContainerVisible(10) && (
+                {isContainerVisible('InfoCard_home-adjustments10') && (
                   <Section id="InfoCard_home-adjustments10">
                     <Title>התאמות בחצר ומרפסת</Title>
                     <Summary>
                       בעיה: קושי בגישה לחצר, סכנת החלקה, צורך בישיבה נוחה.
                       פתרון: משטחים מונעי החלקה, ריהוט מותאם, תאורה מספקת.
                     </Summary>
-                    <ExpandButton onClick={() => handleExpand(9)}>
-                      {expandedItems[9] ? 'סגור מידע נוסף' : 'מידע נוסף ולפרוט על זכויות לחץ כאן'}
+                    <ExpandButton onClick={() => handleExpand('InfoCard_home-adjustments10')}>
+                      {expandedItems['InfoCard_home-adjustments10'] ? 'סגור מידע נוסף' : 'מידע נוסף ולפרוט על זכויות לחץ כאן'}
                     </ExpandButton>
-                    <ExpandableContent isExpanded={!!expandedItems[9]}>
+                    <ExpandableContent isExpanded={!!expandedItems['InfoCard_home-adjustments10']}>
                       <SectionTitle>המלצות וזכויות</SectionTitle>
                       <RecommendationsText>
                         - התקנת משטחים מונעי החלקה
@@ -527,17 +539,17 @@ const ServicePage = () => {
                 )}
 
                 {/* Container 11 - Column 12 */}
-                {isContainerVisible(11) && (
+                {isContainerVisible('InfoCard_home-adjustments11') && (
                   <Section id="InfoCard_home-adjustments11">
                     <Title>התאמת דלתות ומעברים</Title>
                     <Summary>
                       בעיה: דלתות צרות, מפתנים גבוהים, קושי בפתיחה וסגירה.
                       פתרון: הרחבת פתחים, הנמכת מפתנים, התקנת ידיות מותאמות.
                     </Summary>
-                    <ExpandButton onClick={() => handleExpand(10)}>
-                      {expandedItems[10] ? 'סגור מידע נוסף' : 'מידע נוסף ולפרוט על זכויות לחץ כאן'}
+                    <ExpandButton onClick={() => handleExpand('InfoCard_home-adjustments11')}>
+                      {expandedItems['InfoCard_home-adjustments11'] ? 'סגור מידע נוסף' : 'מידע נוסף ולפרוט על זכויות לחץ כאן'}
                     </ExpandButton>
-                    <ExpandableContent isExpanded={!!expandedItems[10]}>
+                    <ExpandableContent isExpanded={!!expandedItems['InfoCard_home-adjustments11']}>
                       <SectionTitle>המלצות וזכויות</SectionTitle>
                       <RecommendationsText>
                         - הרחבת פתחי דלתות ל-80 ס"מ לפחות
@@ -555,17 +567,17 @@ const ServicePage = () => {
                 )}
 
                 {/* Container 12 - Column 13 */}
-                {isContainerVisible(12) && (
+                {isContainerVisible('InfoCard_home-adjustments12') && (
                   <Section id="InfoCard_home-adjustments12">
                     <Title>התאמות בחדר כביסה</Title>
                     <Summary>
                       בעיה: קושי בהפעלת מכונות כביסה, גישה למדפים ומייבש.
                       פתרון: מכונות בגובה נוח, מדפים נגישים, משטח עבודה מותאם.
                     </Summary>
-                    <ExpandButton onClick={() => handleExpand(11)}>
-                      {expandedItems[11] ? 'סגור מידע נוסף' : 'מידע נוסף ולפרוט על זכויות לחץ כאן'}
+                    <ExpandButton onClick={() => handleExpand('InfoCard_home-adjustments12')}>
+                      {expandedItems['InfoCard_home-adjustments12'] ? 'סגור מידע נוסף' : 'מידע נוסף ולפרוט על זכויות לחץ כאן'}
                     </ExpandButton>
-                    <ExpandableContent isExpanded={!!expandedItems[11]}>
+                    <ExpandableContent isExpanded={!!expandedItems['InfoCard_home-adjustments12']}>
                       <SectionTitle>המלצות וזכויות</SectionTitle>
                       <RecommendationsText>
                         - הגבהת מכונות כביסה ומייבש
@@ -583,17 +595,17 @@ const ServicePage = () => {
                 )}
 
                 {/* Container 13 - Column 14 */}
-                {isContainerVisible(13) && (
+                {isContainerVisible('InfoCard_home-adjustments13') && (
                   <Section id="InfoCard_home-adjustments13">
                     <Title>מערכות חימום וקירור</Title>
                     <Summary>
                       בעיה: קושי בהפעלת מזגנים ומערכות חימום, בקרת טמפרטורה.
                       פתרון: שלט מרכזי, תרמוסטט נגיש, מערכת חכמה.
                     </Summary>
-                    <ExpandButton onClick={() => handleExpand(12)}>
-                      {expandedItems[12] ? 'סגור מידע נוסף' : 'מידע נוסף ולפרוט על זכויות לחץ כאן'}
+                    <ExpandButton onClick={() => handleExpand('InfoCard_home-adjustments13')}>
+                      {expandedItems['InfoCard_home-adjustments13'] ? 'סגור מידע נוסף' : 'מידע נוסף ולפרוט על זכויות לחץ כאן'}
                     </ExpandButton>
-                    <ExpandableContent isExpanded={!!expandedItems[12]}>
+                    <ExpandableContent isExpanded={!!expandedItems['InfoCard_home-adjustments13']}>
                       <SectionTitle>המלצות וזכויות</SectionTitle>
                       <RecommendationsText>
                         - התקנת מערכת שליטה מרכזית
@@ -611,17 +623,17 @@ const ServicePage = () => {
                 )}
 
                 {/* Container 14 - Column 15 */}
-                {isContainerVisible(14) && (
+                {isContainerVisible('InfoCard_home-adjustments14') && (
                   <Section id="InfoCard_home-adjustments14">
                     <Title>התאמת חלונות</Title>
                     <Summary>
                       בעיה: קושי בפתיחה וסגירה של חלונות, גישה לווילונות ותריסים.
                       פתרון: מנגנונים חשמליים, ידיות מותאמות, שלט רחוק.
                     </Summary>
-                    <ExpandButton onClick={() => handleExpand(13)}>
-                      {expandedItems[13] ? 'סגור מידע נוסף' : 'מידע נוסף ולפרוט על זכויות לחץ כאן'}
+                    <ExpandButton onClick={() => handleExpand('InfoCard_home-adjustments14')}>
+                      {expandedItems['InfoCard_home-adjustments14'] ? 'סגור מידע נוסף' : 'מידע נוסף ולפרוט על זכויות לחץ כאן'}
                     </ExpandButton>
-                    <ExpandableContent isExpanded={!!expandedItems[13]}>
+                    <ExpandableContent isExpanded={!!expandedItems['InfoCard_home-adjustments14']}>
                       <SectionTitle>המלצות וזכויות</SectionTitle>
                       <RecommendationsText>
                         - התקנת מנגנונים חשמליים לחלונות
@@ -639,17 +651,17 @@ const ServicePage = () => {
                 )}
 
                 {/* Container 15 - Column 16 */}
-                {isContainerVisible(15) && (
+                {isContainerVisible('InfoCard_home-adjustments15') && (
                   <Section id="InfoCard_home-adjustments15">
                     <Title>פתרונות אחסון נגישים</Title>
                     <Summary>
                       בעיה: קושי בגישה לארונות גבוהים, אחסון לא נגיש.
                       פתרון: מדפים מתכווננים, מגירות נשלפות, ארונות בגובה נוח.
                     </Summary>
-                    <ExpandButton onClick={() => handleExpand(14)}>
-                      {expandedItems[14] ? 'סגור מידע נוסף' : 'מידע נוסף ולפרוט על זכויות לחץ כאן'}
+                    <ExpandButton onClick={() => handleExpand('InfoCard_home-adjustments15')}>
+                      {expandedItems['InfoCard_home-adjustments15'] ? 'סגור מידע נוסף' : 'מידע נוסף ולפרוט על זכויות לחץ כאן'}
                     </ExpandButton>
-                    <ExpandableContent isExpanded={!!expandedItems[14]}>
+                    <ExpandableContent isExpanded={!!expandedItems['InfoCard_home-adjustments15']}>
                       <SectionTitle>המלצות וזכויות</SectionTitle>
                       <RecommendationsText>
                         - התקנת מדפים מתכווננים
@@ -667,17 +679,17 @@ const ServicePage = () => {
                 )}
 
                 {/* Container 16 - Column 17 */}
-                {isContainerVisible(16) && (
+                {isContainerVisible('InfoCard_home-adjustments16') && (
                   <Section id="InfoCard_home-adjustments16">
                     <Title>מערכות תקשורת ביתיות</Title>
                     <Summary>
                       בעיה: קושי בתקשורת בין חדרים, צורך במערכת אינטרקום נגישה.
                       פתרון: מערכת אינטרקום אלחוטית, לחצני חירום, מערכת שליטה מרכזית.
                     </Summary>
-                    <ExpandButton onClick={() => handleExpand(15)}>
-                      {expandedItems[15] ? 'סגור מידע נוסף' : 'מידע נוסף ולפרוט על זכויות לחץ כאן'}
+                    <ExpandButton onClick={() => handleExpand('InfoCard_home-adjustments16')}>
+                      {expandedItems['InfoCard_home-adjustments16'] ? 'סגור מידע נוסף' : 'מידע נוסף ולפרוט על זכויות לחץ כאן'}
                     </ExpandButton>
-                    <ExpandableContent isExpanded={!!expandedItems[15]}>
+                    <ExpandableContent isExpanded={!!expandedItems['InfoCard_home-adjustments16']}>
                       <SectionTitle>המלצות וזכויות</SectionTitle>
                       <RecommendationsText>
                         - התקנת מערכת אינטרקום אלחוטית
@@ -695,17 +707,17 @@ const ServicePage = () => {
                 )}
 
                 {/* Container 17 - Column 18 */}
-                {isContainerVisible(17) && (
+                {isContainerVisible('InfoCard_home-adjustments17') && (
                   <Section id="InfoCard_home-adjustments17">
                     <Title>התאמת שירותי אורחים</Title>
                     <Summary>
                       בעיה: מרחב צר, חוסר נגישות, קושי בשימוש.
                       פתרון: הרחבת המרחב, התקנת אביזרי עזר, שיפור נגישות.
                     </Summary>
-                    <ExpandButton onClick={() => handleExpand(16)}>
-                      {expandedItems[16] ? 'סגור מידע נוסף' : 'מידע נוסף ולפרוט על זכויות לחץ כאן'}
+                    <ExpandButton onClick={() => handleExpand('InfoCard_home-adjustments17')}>
+                      {expandedItems['InfoCard_home-adjustments17'] ? 'סגור מידע נוסף' : 'מידע נוסף ולפרוט על זכויות לחץ כאן'}
                     </ExpandButton>
-                    <ExpandableContent isExpanded={!!expandedItems[16]}>
+                    <ExpandableContent isExpanded={!!expandedItems['InfoCard_home-adjustments17']}>
                       <SectionTitle>המלצות וזכויות</SectionTitle>
                       <RecommendationsText>
                         - הרחבת פתח הדלת
@@ -723,17 +735,17 @@ const ServicePage = () => {
                 )}
 
                 {/* Container 18 - Column 19 */}
-                {isContainerVisible(18) && (
+                {isContainerVisible('InfoCard_home-adjustments18') && (
                   <Section id="InfoCard_home-adjustments18">
                     <Title>התאמת מדרגות פנים</Title>
                     <Summary>
                       בעיה: קושי בעליה וירידה במדרגות פנימיות.
                       פתרון: מעלון מדרגות, מעקות כפולים, תאורה מותאמת.
                     </Summary>
-                    <ExpandButton onClick={() => handleExpand(17)}>
-                      {expandedItems[17] ? 'סגור מידע נוסף' : 'מידע נוסף ולפרוט על זכויות לחץ כאן'}
+                    <ExpandButton onClick={() => handleExpand('InfoCard_home-adjustments18')}>
+                      {expandedItems['InfoCard_home-adjustments18'] ? 'סגור מידע נוסף' : 'מידע נוסף ולפרוט על זכויות לחץ כאן'}
                     </ExpandButton>
-                    <ExpandableContent isExpanded={!!expandedItems[17]}>
+                    <ExpandableContent isExpanded={!!expandedItems['InfoCard_home-adjustments18']}>
                       <SectionTitle>המלצות וזכויות</SectionTitle>
                       <RecommendationsText>
                         - התקנת מעלון מדרגות
@@ -751,17 +763,17 @@ const ServicePage = () => {
                 )}
 
                 {/* Container 19 - Column 20 */}
-                {isContainerVisible(19) && (
+                {isContainerVisible('InfoCard_home-adjustments19') && (
                   <Section id="InfoCard_home-adjustments19">
                     <Title>התאמת חדר עבודה</Title>
                     <Summary>
                       בעיה: עמדת עבודה לא מותאמת, קושי בישיבה ממושכת.
                       פתרון: שולחן מתכוונן, כיסא ארגונומי, אביזרי עזר.
                     </Summary>
-                    <ExpandButton onClick={() => handleExpand(18)}>
-                      {expandedItems[18] ? 'סגור מידע נוסף' : 'מידע נוסף ולפרוט על זכויות לחץ כאן'}
+                    <ExpandButton onClick={() => handleExpand('InfoCard_home-adjustments19')}>
+                      {expandedItems['InfoCard_home-adjustments19'] ? 'סגור מידע נוסף' : 'מידע נוסף ולפרוט על זכויות לחץ כאן'}
                     </ExpandButton>
-                    <ExpandableContent isExpanded={!!expandedItems[18]}>
+                    <ExpandableContent isExpanded={!!expandedItems['InfoCard_home-adjustments19']}>
                       <SectionTitle>המלצות וזכויות</SectionTitle>
                       <RecommendationsText>
                         - שולחן עבודה מתכוונן חשמלי

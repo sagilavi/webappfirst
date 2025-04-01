@@ -7,6 +7,7 @@ import Categories from './pages/Categories';
 import Contact from './pages/Contact';
 import Login from './pages/Login';
 import ServicePage from './pages/ServicePage';
+import AdaptedHomePage from './pages/AdaptedHomePage';
 
 // Main container styling
 const AppContainer = styled.div`
@@ -40,6 +41,7 @@ function App() {
             <Route path="/contact" element={<Contact />} />
             <Route path="/login" element={<Login />} />
             <Route path="/services/:type" element={<ServicePage />} />
+            <Route path="/services/adapted-home" element={<AdaptedHomePage />} />
           </Routes>
         </ContentWrapper>
       </AppContainer>

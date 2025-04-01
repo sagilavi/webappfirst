@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import styled from '@emotion/styled';
 
 const Container = styled.div`
@@ -54,6 +54,17 @@ const ServiceButton = styled.button`
 
 const Categories = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  
+  const handleNavigate = (path: string) => {
+    const searchParams = new URLSearchParams(location.search);
+    const answer = searchParams.get('answer');
+    if (answer) {
+      navigate(`${path}?answer=${answer}`);
+    } else {
+      navigate(path);
+    }
+  };
 
   const categories = [
     { title: 'זכויות', type: 'rights' },
@@ -68,19 +79,23 @@ const Categories = () => {
       <CategoriesGrid>
         <CategoryCard>
           <CategoryTitle>זכויות</CategoryTitle>
-          <ServiceButton onClick={() => navigate('/services/rights')}>רשימת שירותים</ServiceButton>
+          <ServiceButton onClick={() => handleNavigate('/services/rights')}>רשימת שירותים</ServiceButton>
         </CategoryCard>
         <CategoryCard>
           <CategoryTitle>קבלת סיוע</CategoryTitle>
-          <ServiceButton onClick={() => navigate('/services/assistance')}>רשימת שירותים</ServiceButton>
+          <ServiceButton onClick={() => handleNavigate('/services/assistance')}>רשימת שירותים</ServiceButton>
         </CategoryCard>
         <CategoryCard>
           <CategoryTitle>שירותים רפואיים</CategoryTitle>
-          <ServiceButton onClick={() => navigate('/services/medical')}>רשימת שירותים</ServiceButton>
+          <ServiceButton onClick={() => handleNavigate('/services/medical')}>רשימת שירותים</ServiceButton>
         </CategoryCard>
         <CategoryCard>
           <CategoryTitle>התאמות לבית</CategoryTitle>
-          <ServiceButton onClick={() => navigate('/services/home-adjustments')}>רשימת שירותים</ServiceButton>
+          <ServiceButton onClick={() => handleNavigate('/services/home-adjustments')}>רשימת שירותים</ServiceButton>
+        </CategoryCard>
+        <CategoryCard>
+          <CategoryTitle>בית מותאם</CategoryTitle>
+          <ServiceButton onClick={() => handleNavigate('/services/adapted-home')}>רשימת שירותים</ServiceButton>
         </CategoryCard>
       </CategoriesGrid>
     </Container>
