@@ -3,6 +3,20 @@ import { useState, useEffect } from 'react';
 import styled from '@emotion/styled';
 import { fetchSheetData } from '../utils/googleSheetsConfig';
 
+// Color scheme
+const colors = {
+  primary: '#4CAF50',
+  primaryDark: '#388E3C',
+  primaryLight: 'rgba(76, 175, 80, 0.1)',
+  primaryShadow: 'rgba(76, 175, 80, 0.2)',
+  primaryShadowDark: 'rgba(76, 175, 80, 0.3)',
+  primaryShadowDarkButton: '#000000',
+
+  background: '#D5D9BA',
+  white: '#ffffff',
+  text: '#333333',
+} as const;
+
 interface SheetData {
   headers: string[];
   values: string[];
@@ -14,7 +28,7 @@ const PageContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  background-color: #D5D9BA !important;
+  background-color: ${colors.background} !important;
   padding: 3rem 2rem;
 `;
 
@@ -26,7 +40,7 @@ const ContentWrapper = styled.div`
 
 const Title = styled.h1`
   font-size: 2.5rem;
-  color: #4CAF50;
+  color: ${colors.primary};
   margin-bottom: 2rem;
   text-align: center;
   font-weight: 700;
@@ -34,11 +48,11 @@ const Title = styled.h1`
 
 const Section = styled.div`
   margin-bottom: 2rem;
-  background: #ffffff;
+  background: ${colors.white};
   border-radius: 12px;
   padding: 2rem;
-  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.1);
-  border: 1px solid rgba(76, 175, 80, 0.1);
+  box-shadow: 0 4px 12px ${colors.primaryShadow};
+  border: 1px solid ${colors.primaryLight};
   transition: transform 0.3s ease;
 
   &:hover {
@@ -47,14 +61,14 @@ const Section = styled.div`
 `;
 
 const SectionTitle = styled.h3`
-  color: #4CAF50;
+  color: ${colors.primary};
   font-size: 1.3rem;
   margin-bottom: 1rem;
   text-align: right;
 `;
 
 const Summary = styled.p`
-  color: #333333;
+  color: ${colors.text};
   font-size: 1.1rem;
   line-height: 1.6;
   text-align: right;
@@ -62,23 +76,23 @@ const Summary = styled.p`
 `;
 
 const ExpandButton = styled.button`
-  background-color: #4CAF50;
-  color: #ffffff;
+  background-color: ${colors.primary};
+  color: ${colors.primaryShadowDarkButton};
   border: none;
   padding: 1rem 2rem;
   font-size: 1.1rem;
-  border-radius: 8px;
+  border-radius: 18px;
   cursor: pointer;
   transition: all 0.3s ease;
   display: block;
   margin: 0 auto;
-  margin-bottom: 1rem;
-  box-shadow: 0 2px 4px rgba(76, 175, 80, 0.2);
+  margin-bottom: 0rem;
+  box-shadow: 0 2px 4px ${colors.primaryShadow};
 
   &:hover {
-    background-color: #388E3C;
+    background-color: ${colors.primaryDark};
     transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(76, 175, 80, 0.3);
+    box-shadow: 0 4px 8px ${colors.primaryShadowDark};
   }
 `;
 
@@ -98,24 +112,24 @@ const LinksWrapper = styled.div`
 `;
 
 const StyledLink = styled.a`
-  color: #ffffff;
+  color: ${colors.white};
   text-decoration: none;
   display: inline-block;
   font-size: 1.1rem;
   text-align: center;
-  background-color: #4CAF50;
+  background-color: ${colors.primary};
   padding: 0.8rem 1.5rem;
   border-radius: 6px;
   transition: all 0.3s ease;
-  box-shadow: 0 2px 4px rgba(76, 175, 80, 0.1);
+  box-shadow: 0 2px 4px ${colors.primaryShadow};
   width: 25%;
   min-width: 150px;
 
   &:hover {
-    background-color: #388E3C;
-    color: #ffffff;
+    background-color: ${colors.primaryDark};
+    color: ${colors.white};
     transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(76, 175, 80, 0.2);
+    box-shadow: 0 4px 8px ${colors.primaryShadowDark};
   }
 `;
 
@@ -134,12 +148,12 @@ const StyledImage = styled.img`
 `;
 
 const DebugContainer = styled.div`
-  background: #ffffff;
+  background: ${colors.white};
   border-radius: 12px;
   padding: 2rem;
   margin-bottom: 2rem;
-  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.1);
-  border: 1px solid rgba(76, 175, 80, 0.1);
+  box-shadow: 0 4px 12px ${colors.primaryShadow};
+  border: 1px solid ${colors.primaryLight};
   direction: ltr;
 `;
 
@@ -283,41 +297,46 @@ const AdaptedHomePage = () => {
               {expandedItems['InfoCard_home-adjustments_2'] ? 'הצג פחות' : 'הצג עוד'}
             </ExpandButton>
             <ExpandableContent isExpanded={!!expandedItems['InfoCard_home-adjustments_2']}>
-              <SectionTitle>דגשים חשובים</SectionTitle>
+              <SectionTitle>מימוש והגשה</SectionTitle>
               <Summary>
                 לייעול התהליך נמליץ לקבל המלצה בפיזיוטרפיסט או רופא ובה רשום במפורש הצורך ברמפה/זחליל עולה מדרגות נייד.
               </Summary>
-
-              <SectionTitle>אפשרויות סיוע</SectionTitle>
-              <Summary>
-                השאלת/השכרת רמפה ניידת והתקנת רמפה נגישה ו/או הוספת מאחזי יד
-              </Summary>
-
               <LinksWrapper>
                 <StyledLink href="https://www.maccabi4u.co.il/new/maccabi_news/general/49130/#?module=NewFormMobility" target="_blank">
                   ציוד מכבי
                 </StyledLink>
+              </LinksWrapper>
+
+              <SectionTitle>הסתייעות ביד שרה לקבלת ציוד</SectionTitle>
+              <Summary>
+                השאלת/השכרת רמפה ניידת והתקנת רמפה נגישה ו/או הוספת מאחזי יד
+              </Summary>
+              <LinksWrapper>
                 <StyledLink href="https://yad-sarah.net/" target="_blank">
                   ציוד יד שרה
                 </StyledLink>
-                <StyledLink href="https://www.maccabi4u.co.il/new/eligibilites/2161/" target="_blank">
-                  אביזרים בהשתתפות מכבי
-                </StyledLink>
-                <StyledLink href="https://www.gov.il/he/service/request-to-improve-housing-conditions-for-handicapped" target="_blank">
-                  בדיקת סיוע משרד השיכון
-                </StyledLink>
               </LinksWrapper>
 
-              <SectionTitle>זכויות והחזרים</SectionTitle>
+              <SectionTitle>אביזרים בהשתתפות עצמית</SectionTitle>
               <Summary>
                 פנו למטפל/אחות/פיזיותרפיסט ובקשה הפניה שתכלול אבחנה רפואית והמלצה לרכישה של הפריט. קנו את המוצר ולאחר מכן הגישו למרכז הרפואי בדואר או בעמדת אל-תור את ההפניה שקיבלת ממטפל הקופה, קבלה וחשבונית מס מקורית. ההחזר ישלח אליכם.
                 מאחזים בגדלים שונים - 11 - 49 ש"ח
               </Summary>
+              <LinksWrapper>
+                <StyledLink href="https://www.maccabi4u.co.il/new/eligibilites/2161/" target="_blank">
+                  אביזרים בהשתתפות מכבי
+                </StyledLink>
+              </LinksWrapper>
 
-              <SectionTitle>מידע נוסף</SectionTitle>
+              <SectionTitle>רשויות תומכות נוספות</SectionTitle>
               <Summary>
                 על אף שהרופאים צופים חזרה לתפקוד מלא, יש לשקול הערכות למצב עתידי שבו יהיה צורך ברמפה קבועה. ניתן להגיש בקשה לסיוע במימון התאמות נגישות לבית ממשרד הבינוי והשיכון. מספר רשויות מקומיות ועיריות מציעות סיוע במימון התאמות נגישות לבתים במקרים אלו, בדקו זכאות מול מחלקת הרווחה של אזור המגורים.
               </Summary>
+              <LinksWrapper>
+                <StyledLink href="https://www.gov.il/he/service/request-to-improve-housing-conditions-for-handicapped" target="_blank">
+                  בדיקת סיוע משרד השיכון
+                </StyledLink>
+              </LinksWrapper>
             </ExpandableContent>
           </Section>
         )}
