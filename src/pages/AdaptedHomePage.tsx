@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import styled from '@emotion/styled';
 import { fetchSheetData } from '../utils/googleSheetsConfig';
 
-// Color scheme
+// Color schemes
 const colors = {
   primary: '#4CAF50',
   primaryDark: '#388E3C',
