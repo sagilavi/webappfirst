@@ -3,8 +3,9 @@ import styled from '@emotion/styled';
 
 const Container = styled.div`
   padding: 2rem;
-  background-color: #f8faf8;
+  background-color: #D5D9BA !important;
   min-height: calc(100vh - 80px);
+  width: 100%;
 `;
 
 const Title = styled.h1`
@@ -23,7 +24,7 @@ const CategoriesGrid = styled.div`
 `;
 
 const CategoryCard = styled.div`
-  background: white;
+  background: #ffffff;
   padding: 2rem;
   border-radius: 10px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);

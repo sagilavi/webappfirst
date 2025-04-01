@@ -15,7 +15,7 @@ const AppContainer = styled.div`
   width: 100%;
   display: flex;
   flex-direction: column;
-  background-color: #f5f5f5;
+  background-color: #D5D9BA !important;
 `;
 
 // Main content wrapper
@@ -24,6 +24,7 @@ const ContentWrapper = styled.main`
   flex: 1;
   display: flex;
   flex-direction: column;
+  background-color: #D5D9BA !important;
 `;
 
 function App() {
