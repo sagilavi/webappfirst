@@ -1,46 +1,49 @@
 export const GOOGLE_SHEETS_CONFIG = {
-  SPREADSHEET_ID: '1V3xUg1LplbLN0NK3lsnW2p9WD6-2WePtPG_LOzp30_0',
-  SHEET_ID: '2040998711' // Adding the specific sheet ID from your URL
+  SPREADSHEET_ID: '1xpm2FKHnuKGv6_icQ0O8iHNg_T3zI08TUFE1r8wImq0',
+  SHEET_ID: '2040998711'
 };
 
-export const fetchSheetData = async (answer: string) => {
-  try {
-    console.log('Fetching data for answer:', answer);
-    const url = `https://docs.google.com/spreadsheets/d/${GOOGLE_SHEETS_CONFIG.SPREADSHEET_ID}/export?format=csv&gid=${GOOGLE_SHEETS_CONFIG.SHEET_ID}`;
-    console.log('Fetching from URL:', url);
+interface SheetData {
+  headers: string[];
+  values: string[];
+}
 
-    const response = await fetch(url);
+export const fetchSheetData = async (answer: string): Promise<SheetData | null> => {
+  try {
+    const response = await fetch(
+      `https://docs.google.com/spreadsheets/d/${GOOGLE_SHEETS_CONFIG.SPREADSHEET_ID}/gviz/tq?tqx=out:csv&gid=${GOOGLE_SHEETS_CONFIG.SHEET_ID}`
+    );
 
     if (!response.ok) {
-      console.error(`HTTP error! status: ${response.status}`);
+      console.error('Failed to fetch data from Google Sheets');
       return null;
     }
 
-    const text = await response.text();
-    console.log('Received data length:', text.length);
-    console.log('First 100 characters:', text.substring(0, 100));
+    const csvText = await response.text();
+    const rows = csvText.split('\n').map(row => 
+      row.replace(/^"|"$/g, '') // Remove leading/trailing quotes
+         .split('","') // Split on "," pattern
+    );
+    
+    if (rows.length < 2) {
+      console.error('No data found in the spreadsheet');
+      return null;
+    }
 
-    // Split the CSV into rows and columns
-    const rows = text.split('\n').map(row => row.split(','));
-    console.log('Number of rows:', rows.length);
-    console.log('First row:', rows[0]);
-    
-    // Skip header row and find the matching row
-    const targetRow = rows.slice(1).find(row => {
-      const userId = row[0]?.trim();
-      console.log('Checking row with ID:', userId);
-      return userId === answer;
-    });
-    
+    const headers = rows[0];
+    const targetRow = rows.find(row => row[0] === answer);
+
     if (!targetRow) {
-      console.log(`No row found for answer: ${answer}`);
+      console.error(`No row found for answer: ${answer}`);
       return null;
     }
 
-    console.log('Found row:', targetRow);
-    return targetRow;
+    return {
+      headers: headers,
+      values: targetRow
+    };
   } catch (error) {
-    console.error('Error fetching sheet data:', error);
+    console.error('Error fetching data:', error);
     return null;
   }
 }; 
