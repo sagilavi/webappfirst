@@ -11,7 +11,7 @@ interface SheetData {
 export const fetchSheetData = async (answer: string): Promise<SheetData | null> => {
   try {
     const response = await fetch(
-      `https://docs.google.com/spreadsheets/d/${GOOGLE_SHEETS_CONFIG.SPREADSHEET_ID}/gviz/tq?tqx=out:csv&gid=${GOOGLE_SHEETS_CONFIG.SHEET_ID}`
+      `https://docs.google.com/spreadsheets/d/${GOOGLE_SHEETS_CONFIG.SPREADSHEET_ID}/export?format=csv&gid=${GOOGLE_SHEETS_CONFIG.SHEET_ID}`
     );
 
     if (!response.ok) {
@@ -20,27 +20,41 @@ export const fetchSheetData = async (answer: string): Promise<SheetData | null> 
     }
 
     const csvText = await response.text();
-    const rows = csvText.split('\n').map(row => 
-      row.replace(/^"|"$/g, '') // Remove leading/trailing quotes
-         .split('","') // Split on "," pattern
-    );
+    console.log('Raw CSV:', csvText); // Debug log
     
+    // Split into rows and clean up the data
+    const rows = csvText.split('\n').map(row => {
+      // Remove any BOM characters and quotes
+      const cleanRow = row.replace(/^\uFEFF/, '').replace(/^"|"$/g, '');
+      // Split on comma but handle escaped commas within quotes
+      return cleanRow.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
+    });
+
     if (rows.length < 2) {
       console.error('No data found in the spreadsheet');
       return null;
     }
 
-    const headers = rows[0];
-    const targetRow = rows.find(row => row[0] === answer);
+    // Clean up headers (remove quotes and whitespace)
+    const headers = rows[0].map(header => header.trim().replace(/^"|"$/g, ''));
+    
+    // Find the row with the matching answer
+    const targetRow = rows.find(row => row[0].trim().replace(/^"|"$/g, '') === answer);
 
     if (!targetRow) {
       console.error(`No row found for answer: ${answer}`);
       return null;
     }
 
+    // Clean up values (remove quotes and whitespace)
+    const values = targetRow.map(value => value.trim().replace(/^"|"$/g, ''));
+
+    console.log('Fetched headers:', headers);
+    console.log('Fetched values:', values);
+
     return {
       headers: headers,
-      values: targetRow
+      values: values
     };
   } catch (error) {
     console.error('Error fetching data:', error);
