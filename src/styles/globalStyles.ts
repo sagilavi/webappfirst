@@ -17,6 +17,8 @@ export const theme = {
     ForestCharcoal: '#414336',
     ForestCharcoalLight: '#9CA786',
     LuminousCream: '#FBFFDF',
+    LavenderPurple: '#E6E6FA',
+    SageMist: '#D5D9BA',
 
     // Background and text colors
     pageBackground: '#D5D9BA',
@@ -209,7 +211,7 @@ export const GlobalStyles = createGlobalStyle`
     display: flex;
     flex-direction: column;
     align-items: center;
-    background-color: ${theme.colors.background} !important;
+    background-color: ${theme.colors.pageBackground} !important;
     padding: ${theme.spacing.large} ${theme.spacing.medium};
   }
 
@@ -289,7 +291,7 @@ export const GlobalStyles = createGlobalStyle`
     .content-section {
       padding: ${theme.spacing.medium};
       border-top: 3px solid ${theme.colors.ForestCharcoal};
-
+      border-radius: 0;
       margin-top: ${theme.spacing.medium};
       
       h3 {
@@ -299,6 +301,54 @@ export const GlobalStyles = createGlobalStyle`
       
       p {
         margin-bottom: ${theme.spacing.medium};
+      }
+
+      &.with-image {
+        display: flex;
+        flex-direction: row-reverse; /* Image on left, text on right */
+        align-items: center;
+        gap: 1.5rem;
+        position: relative;
+
+        .inline-image {
+          width: 420px;
+          height: 300px; /* Fixed height for better alignment */
+          border-radius: 8px;
+          object-fit: cover;
+        }
+
+        .text-side {
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          height: 300px; /* Match image height */
+          justify-content: space-between;
+          align-items: center; /* Center align content */
+          padding: 0 1rem;
+
+          h3 {
+            text-align: center;
+            margin-top: 0; /* Align with top of image */
+          }
+
+          .text-content {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            flex: 1;
+
+            p {
+              text-align: center;
+              margin: 0; /* Remove default margins for better centering */
+            }
+          }
+
+          .links-container {
+            margin-bottom: 0; /* Align with bottom of image */
+            width: auto;
+          }
+        }
       }
     }
   }

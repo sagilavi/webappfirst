@@ -176,15 +176,24 @@ const AdaptedHomePage = () => {
               </button>
               
               <div className={`expandable-content ${expandedItems['InfoCard_home-adjustments1'] ? 'expanded' : ''}`}>
-                <div className="content-section">
+              <div className="content-section with-image">
+
+                <img className="inline-image" src="/support-team.jpg" alt="Support Team" />
+                <div className="text-side">
+                <div className="text-content">
+
                   <h3>מימוש והגשה</h3>
                   <p>
                     לייעול התהליך נמליץ לקבל המלצה בפיזיוטרפיסט או רופא ובה רשום במפורש הצורך ברמפה/זחליל עולה מדרגות נייד.
                   </p>
+                  </div>
+
                   <div className="links-container">
                     <a href="https://www.maccabi4u.co.il/new/maccabi_news/general/49130/#?module=NewFormMobility" target="_blank" rel="noopener noreferrer">
                       ציוד מכבי
                     </a>
+                </div>
+
                   </div>
                 </div>
 
