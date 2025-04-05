@@ -2,6 +2,7 @@ import { useLocation } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import styled from '@emotion/styled';
 import { fetchSheetData } from '../utils/googleSheetsConfig';
+import { theme } from '../styles/globalStyles';
 
 // Color schemes
 const colors = {
@@ -28,14 +29,14 @@ const PageContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  background-color: ${colors.background} !important;
-  padding: 3rem 2rem;
+  background-color: ${theme.colors.background} !important;
+  padding: ${theme.spacing.large} ${theme.spacing.medium};
 `;
 
 const ContentWrapper = styled.div`
   width: 100%;
   max-width: 1200px;
-  padding: 2rem;
+  padding: ${theme.spacing.medium};
 `;
 
 const Title = styled.h1`
@@ -47,12 +48,12 @@ const Title = styled.h1`
 `;
 
 const Section = styled.div`
-  margin-bottom: 2rem;
-  background: ${colors.white};
-  border-radius: 12px;
-  padding: 2rem;
-  box-shadow: 0 4px 12px ${colors.primaryShadow};
-  border: 1px solid ${colors.primaryLight};
+  margin-bottom: ${theme.spacing.medium};
+  background: ${theme.colors.white};
+  border-radius: ${theme.borderRadius.medium};
+  padding: ${theme.spacing.medium};
+  box-shadow: ${theme.shadows.large} ${theme.colors.primaryShadow};
+  border: 1px solid ${theme.colors.primaryLight};
   transition: transform 0.3s ease;
 
   &:hover {
@@ -100,14 +101,14 @@ const ExpandableContent = styled.div<{ isExpanded: boolean }>`
   max-height: ${props => props.isExpanded ? '2000px' : '0'};
   overflow: hidden;
   transition: max-height 0.6s ease-in-out;
-  margin-top: ${props => props.isExpanded ? '2rem' : '0'};
+  margin-top: ${props => props.isExpanded ? theme.spacing.medium : '0'};
 `;
 
 const LinksWrapper = styled.div`
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: ${theme.spacing.small};
   align-items: center;
 `;
 
@@ -136,9 +137,9 @@ const StyledLink = styled.a`
 const ImageContainer = styled.div`
   width: 200px;
   height: 150px;
-  border-radius: 8px;
+  border-radius: ${theme.borderRadius.small};
   overflow: hidden;
-  margin: 1rem 0;
+  margin: ${theme.spacing.small} 0;
 `;
 
 const StyledImage = styled.img`
@@ -148,12 +149,12 @@ const StyledImage = styled.img`
 `;
 
 const DebugContainer = styled.div`
-  background: ${colors.white};
-  border-radius: 12px;
-  padding: 2rem;
-  margin-bottom: 2rem;
-  box-shadow: 0 4px 12px ${colors.primaryShadow};
-  border: 1px solid ${colors.primaryLight};
+  background: ${theme.colors.white};
+  border-radius: ${theme.borderRadius.medium};
+  padding: ${theme.spacing.medium};
+  margin-bottom: ${theme.spacing.medium};
+  box-shadow: ${theme.shadows.large} ${theme.colors.primaryShadow};
+  border: 1px solid ${theme.colors.primaryLight};
   direction: ltr;
 `;
 
