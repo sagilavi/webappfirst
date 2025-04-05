@@ -1,8 +1,8 @@
 import { useLocation } from 'react-router-dom';
 import { useState, useEffect } from 'react';
-import { fetchSheetData } from '../utils/googleSheetsConfig';
+import { fetchSheetData } from '../../utils/googleSheetsConfig';
 import { ThemeProvider } from 'styled-components';
-import { GlobalStyles, theme } from '../styles/globalStyles';
+import { GlobalStyles, theme } from '../../styles/globalStyles';
 
 interface SheetData {
   headers: string[];

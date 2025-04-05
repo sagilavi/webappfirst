@@ -67,36 +67,27 @@ const Categories = () => {
   };
 
   const categories = [
-    { title: 'זכויות', type: 'rights' },
-    { title: 'קבלת סיוע', type: 'assistance' },
-    { title: 'שירותים רפואיים', type: 'medical' },
-    { title: 'התאמות לבית', type: 'home-adjustments' }
+    { title: 'רווחה', path: '/services/welfare' },
+    { title: 'התאמות לבית', path: '/services/home-adjustments' },
+    { title: 'סיעוד', path: '/services/nursing' },
+    { title: 'פתרונות דיור', path: '/services/housing' },
+    { title: 'בריאות', path: '/services/health' },
+    { title: 'זכויות', path: '/services/rights' },
+    { title: 'בית מותאם', path: '/services/adapted-home' }
   ];
 
   return (
     <Container>
-      <Title>קטגוריית שירותים</Title>
+      <Title>קטגוריות שירותים</Title>
       <CategoriesGrid>
-        <CategoryCard>
-          <CategoryTitle>זכויות</CategoryTitle>
-          <ServiceButton onClick={() => handleNavigate('/services/rights')}>רשימת שירותים</ServiceButton>
-        </CategoryCard>
-        <CategoryCard>
-          <CategoryTitle>קבלת סיוע</CategoryTitle>
-          <ServiceButton onClick={() => handleNavigate('/services/assistance')}>רשימת שירותים</ServiceButton>
-        </CategoryCard>
-        <CategoryCard>
-          <CategoryTitle>שירותים רפואיים</CategoryTitle>
-          <ServiceButton onClick={() => handleNavigate('/services/medical')}>רשימת שירותים</ServiceButton>
-        </CategoryCard>
-        <CategoryCard>
-          <CategoryTitle>התאמות לבית</CategoryTitle>
-          <ServiceButton onClick={() => handleNavigate('/services/home-adjustments')}>רשימת שירותים</ServiceButton>
-        </CategoryCard>
-        <CategoryCard>
-          <CategoryTitle>בית מותאם</CategoryTitle>
-          <ServiceButton onClick={() => handleNavigate('/services/adapted-home')}>רשימת שירותים</ServiceButton>
-        </CategoryCard>
+        {categories.map((category) => (
+          <CategoryCard key={category.path}>
+            <CategoryTitle>{category.title}</CategoryTitle>
+            <ServiceButton onClick={() => handleNavigate(category.path)}>
+              רשימת שירותים
+            </ServiceButton>
+          </CategoryCard>
+        ))}
       </CategoriesGrid>
     </Container>
   );

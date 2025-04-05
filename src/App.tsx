@@ -7,7 +7,13 @@ import Categories from './pages/Categories';
 import Contact from './pages/Contact';
 import Login from './pages/Login';
 import ServicePage from './pages/ServicePage';
-import AdaptedHomePage from './pages/AdaptedHomePage';
+import AdaptedHomePage from './pages/InfoCardsPages/AdaptedHomePage';
+import WelfarePage from './pages/InfoCardsPages/WelfarePage';
+import NursingPage from './pages/InfoCardsPages/NursingPage';
+import HousingPage from './pages/InfoCardsPages/HousingPage';
+import HealthPage from './pages/InfoCardsPages/HealthPage';
+import RightsPage from './pages/InfoCardsPages/RightsPage';
+import HomeAdjustmentsPage from './pages/InfoCardsPages/HomeAdjustmentsPage';
 
 // Main container styling
 const AppContainer = styled.div`
@@ -42,6 +48,12 @@ function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/services/:type" element={<ServicePage />} />
             <Route path="/services/adapted-home" element={<AdaptedHomePage />} />
+            <Route path="/services/welfare" element={<WelfarePage />} />
+            <Route path="/services/nursing" element={<NursingPage />} />
+            <Route path="/services/housing" element={<HousingPage />} />
+            <Route path="/services/health" element={<HealthPage />} />
+            <Route path="/services/rights" element={<RightsPage />} />
+            <Route path="/services/home-adjustments" element={<HomeAdjustmentsPage />} />
           </Routes>
         </ContentWrapper>
       </AppContainer>
