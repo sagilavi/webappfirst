@@ -314,7 +314,7 @@ export const GlobalStyles = createGlobalStyle`
           width: 420px;
           height: 300px; /* Fixed height for better alignment */
           border-radius: 8px;
-          object-fit: cover;
+          object-fit: contain;
         }
 
         .text-side {

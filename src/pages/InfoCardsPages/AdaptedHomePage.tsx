@@ -164,10 +164,11 @@ const AdaptedHomePage = () => {
             {/* Container for Temporary Stairs Accessibility */}
             {isContainerVisible('InfoCard_home-adjustments1') && (
             <div className="container">
-              <h3>פתרון זמני22222222222222222</h3>
+              <h3>פתרונות קבועים להנגשת הכניסה לבית </h3>
               <p>
-                כחלק מהשינוי ולטובת צמצום התלות והעלאת רמת הבטיחות נמליץ על הוספה של זחליל עולה מדרגות נייד, התקנה של מעקי בטיחות ועל התקנה של תאורה חזקה בסביבת הכניסה לבית.
-              </p>
+              כחלק מהשינוי ולטובת הבטיחות במרחב הביתי נמליץ על התקנת מעקות או מאחזי יד בשני צידי המדרגות.
+והתקנת מעלון מדרגות או שימוש בזחליל עולה מדרגות נייד, המאפשרים מעבר בין קומות ללא מאמץ וסכנה בטיחותית. תהליך המימוש מול הקופה נעשה כך-  יש להגיש בקשה לאתר מכבי &gt; בקשה חדשה להתחייבות &gt; תחת בקשה מהמשרד או החזרים, אישורים והתחייבויות
+         </p>
               <button 
                 className="toggle-button"
                 onClick={() => handleExpand('InfoCard_home-adjustments1')}
@@ -178,7 +179,7 @@ const AdaptedHomePage = () => {
               <div className={`expandable-content ${expandedItems['InfoCard_home-adjustments1'] ? 'expanded' : ''}`}>
               <div className="content-section with-image">
 
-                <img className="inline-image" src="/support-team.jpg" alt="Support Team" />
+                <img className="inline-image" src="/ImagesForInfoCards/Logo1.jpg" alt="Support Team" />
                 <div className="text-side">
                 <div className="text-content">
 
@@ -212,7 +213,8 @@ const AdaptedHomePage = () => {
                 <div className="content-section">
                   <h3>אביזרים בהשתתפות עצמית</h3>
                   <p>
-                    פנו למטפל/אחות/פיזיותרפיסט ובקשה הפניה שתכלול אבחנה רפואית והמלצה לרכישה של הפריט. קנו את המוצר ולאחר מכן הגישו למרכז הרפואי בדואר או בעמדת אל-תור את ההפניה שקיבלת ממטפל הקופה, קבלה וחשבונית מס מקורית. ההחזר ישלח אליכם.
+                  פנו למטפל/אחות/פיזיותרפיסט ובקשה הפניה שתכלול אבחנה רפואית והמלצה לרכישה של הפריט. קנו את המוצר ולאחר מכן הגישו למרכז הרפואי בדואר או בעמדת אל-תור את ההפניה שקיבלת ממטפל הקופה, קבלה וחשבונית מס מקורית. ההחזר ישלח אליכם. 
+                  מאחזים בגדלים שונים - 11 - 49 ש"ח
                   </p>
                   <div className="links-container">
                     <a href="https://www.maccabi4u.co.il/new/eligibilites/2161/" target="_blank" rel="noopener noreferrer">

@@ -121,7 +121,7 @@ const HomeAdjustmentsPage = () => {
               
               <div className={`expandable-content ${expandedItems['InfoCard_home_adjustments_1'] ? 'expanded' : ''}`}>
                 <div className="content-section with-image">
-                  <img className="inline-image" src="/home-adjustments.jpg" alt="Home Adjustments" />
+                  <img className="inline-image" src="/ImagesForInfoCards/Logo1.jpg" alt="Home Adjustments" />
                   <div className="text-side">
                     <h3>התאמות ושיפורים בבית</h3>
                     <div className="text-content">
