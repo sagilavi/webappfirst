@@ -1,4 +1,5 @@
 import { useNavigate, useLocation } from 'react-router-dom';
+import { useEffect } from 'react';
 import styled from '@emotion/styled';
 
 const Container = styled.div`
@@ -56,6 +57,16 @@ const Categories = () => {
   const navigate = useNavigate();
   const location = useLocation();
   
+  useEffect(() => {
+    // Check for query parameters on mount
+    const searchParams = new URLSearchParams(location.search);
+    const answer = searchParams.get('answer');
+    if (answer) {
+      // Re-apply the query parameter if it exists
+      navigate(`/categories?answer=${answer}`, { replace: true });
+    }
+  }, []);
+
   const handleNavigate = (path: string) => {
     const searchParams = new URLSearchParams(location.search);
     const answer = searchParams.get('answer');

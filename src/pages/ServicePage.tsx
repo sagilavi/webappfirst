@@ -104,19 +104,13 @@ const SectionTitle = styled.h3`
   text-align: right;
 `;
 
-const LinkContainer = styled.div`
-  display: flex;
-  align-items: flex-start;
-  gap: 2rem;
-  margin-bottom: 1.5rem;
-`;
-
 const LinksWrapper = styled.div`
   flex: 1;
   display: flex;
   flex-direction: column;
   gap: 1rem;
   align-items: center;
+  margin-bottom: 1.5rem;
 `;
 
 const StyledLink = styled.a`
@@ -139,19 +133,6 @@ const StyledLink = styled.a`
     transform: translateY(-2px);
     box-shadow: 0 4px 8px rgba(76, 175, 80, 0.2);
   }
-`;
-
-const ImageContainer = styled.div`
-  width: 200px;
-  height: 150px;
-  border-radius: 8px;
-  overflow: hidden;
-`;
-
-const StyledImage = styled.img`
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
 `;
 
 const RecommendationsText = styled.p`
